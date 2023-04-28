@@ -1,29 +1,41 @@
 import { useState, useEffect } from "react";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { Logo, FormRow, Alert } from "../components";
+import { useAppContext } from "../context/appContext";
 
 const initialState = {
     name: "",
     email: "",
     password: "",
     isMember: true,
-    showAlert: false,
 };
 
 const Register = () => {
     const [values, setValues] = useState(initialState);
+
+    const { isLoading, showAlert, displayAlert } = useAppContext();
 
     const toggleMember = () => {
         setValues({ ...values, isMember: !values.isMember });
     };
 
     const handleChange = (e) => {
-        console.log(e.target);
+        setValues({ ...values, [e.target.name]: e.target.value });
     };
 
     const onSubmit = (e) => {
         e.preventDefault();
-        console.log(e.target);
+
+        //* if any value is missing, throw display alert
+        const { name, email, password, isMember } = values;
+
+        //* name is only required when isMember is not true
+        if (!email || !password || (!isMember && !name)) {
+            displayAlert();
+            return;
+        }
+
+        console.log(values);
     };
 
     return (
@@ -33,7 +45,7 @@ const Register = () => {
                 <h3>{values.isMember ? "Login" : "Register"}</h3>
 
                 {/* Alert */}
-                {values.showAlert && <Alert />}
+                {showAlert && <Alert />}
 
                 {/* Name Input */}
                 {!values.isMember && (
