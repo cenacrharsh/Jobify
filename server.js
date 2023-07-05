@@ -1,21 +1,31 @@
 import express from "express";
 import dotenv from "dotenv";
 
-import notFoundMiddleware from "./middleware/not-found.js";
-import errorHandlerMiddleware from "./middleware/error-handler.js";
-import connectDB from "./db/connect.js";
-
 dotenv.config();
 
 const app = express();
 
+//! DB and Authenticate User
+import connectDB from "./db/connect.js";
+
+//! Routers
+import authRouter from "./db/connect.js";
+
+//! Middleware
+import notFoundMiddleware from "./middleware/not-found.js";
+import errorHandlerMiddleware from "./middleware/error-handler.js";
+
 const PORT = process.env.PORT || 8000;
+
+//* Makes the JSON data available to us
+app.use(express.json());
 
 app.get("/", (req, res) => {
     return res.send("Welcome To Jobify Backend !!!");
 });
 
-//! Middleware
+app.use("/api/v1/auth", authRouter);
+
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
