@@ -4,7 +4,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     //* built in js error always has a message property
     console.log(err);
     const defaultError = {
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        statusCode: err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR,
         msg: err.message || "Something went wrong, Try again later",
     };
 
