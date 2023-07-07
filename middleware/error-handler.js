@@ -1,10 +1,11 @@
 import { StatusCodes } from "http-status-codes";
 
 const errorHandlerMiddleware = (err, req, res, next) => {
+    //* built in js error always has a message property
     console.log(err);
     const defaultError = {
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        msg: "Something went wrong, Try again later",
+        msg: err.message || "Something went wrong, Try again later",
     };
 
     //> Validation Error
