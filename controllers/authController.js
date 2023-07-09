@@ -15,13 +15,22 @@ const register = async (req, res, next) => {
         throw new BadRequestError("Email already registered");
     }
 
+    //# select: false, doesn't work with create()
     //* create a new user in DB
     const user = await User.create({ name, email, password });
 
     //* create JWT Token
     const token = user.createJWT();
 
-    res.status(StatusCodes.CREATED).json({ user, token });
+    res.status(StatusCodes.CREATED).json({
+        user: {
+            email: user.email,
+            lastName: user.lastName,
+            location: user.location,
+            name: user.name,
+        },
+        token,
+    });
 };
 
 const login = async (req, res) => {
