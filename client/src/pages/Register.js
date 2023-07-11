@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { Logo, FormRow, Alert } from "../components";
 import { useAppContext } from "../context/appContext";
@@ -11,9 +13,11 @@ const initialState = {
 };
 
 const Register = () => {
+    const navigate = useNavigate();
+
     const [values, setValues] = useState(initialState);
 
-    const { isLoading, showAlert, displayAlert, registerUser } =
+    const { user, isLoading, showAlert, displayAlert, registerUser } =
         useAppContext();
 
     const toggleMember = () => {
@@ -43,6 +47,15 @@ const Register = () => {
             registerUser(currentUser);
         }
     };
+
+    //* runs on initial render and anytime when user value changes (during register and login)
+    useEffect(() => {
+        if (user) {
+            setTimeout(() => {
+                navigate("/");
+            }, 3000);
+        }
+    }, [user, navigate]);
 
     return (
         <Wrapper className="full-page">
