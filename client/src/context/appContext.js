@@ -10,15 +10,19 @@ import {
     REGISTER_USER_ERROR,
 } from "./actions";
 
+const user = localStorage.getItem("user");
+const token = localStorage.getItem("token");
+const userLocation = localStorage.getItem("location");
+
 const initialState = {
     isLoading: false,
     showAlert: false,
     alertText: "",
     alertType: "",
-    user: null,
-    token: null,
-    userLocation: "",
-    jobLocation: "",
+    user: user ? JSON.parse(user) : null,
+    token: token || null,
+    userLocation: userLocation || "",
+    jobLocation: userLocation || "",
 };
 
 const AppContext = React.createContext();
@@ -40,6 +44,20 @@ const AppProvider = ({ children }) => {
         }, 3000);
     };
 
+    //* save user data in local storage
+    const addUserToLocalStorage = ({ user, token, location }) => {
+        localStorage.setItem(JSON.stringify(user));
+        localStorage.setItem(token);
+        localStorage.setItem(user);
+    };
+
+    //* remove user data from local storage
+    const removeUserFromLocalStorage = () => {
+        localStorage.removeItem(user);
+        localStorage.removeItem(token);
+        localStorage.removeItem(location);
+    };
+
     const registerUser = async (currentUser) => {
         dispatch({
             type: REGISTER_USER_BEGIN,
@@ -50,8 +68,8 @@ const AppProvider = ({ children }) => {
                 "/api/v1/auth/register",
                 currentUser
             );
-            console.log(response);
             const { user, token, location } = response.data;
+
             dispatch({
                 type: REGISTER_USER_SUCCESS,
                 payload: {
@@ -60,6 +78,8 @@ const AppProvider = ({ children }) => {
                     location,
                 },
             });
+
+            addUserToLocalStorage({ user, token, location });
         } catch (error) {
             console.log(error.response);
             dispatch({
