@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import morgan from "morgan";
 import "express-async-errors";
 
 dotenv.config();
@@ -18,6 +19,11 @@ import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
 
 const PORT = process.env.PORT || 8000;
+
+//* Setup Morgan
+if (process.env.NODE_ENV !== "production") {
+    app.use(morgan("dev"));
+}
 
 //* Makes the JSON data available to us
 app.use(express.json());
