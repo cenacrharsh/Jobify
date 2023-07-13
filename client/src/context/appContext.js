@@ -8,6 +8,9 @@ import {
     REGISTER_USER_BEGIN,
     REGISTER_USER_SUCCESS,
     REGISTER_USER_ERROR,
+    LOGIN_USER_BEGIN,
+    LOGIN_USER_SUCCESS,
+    LOGIN_USER_ERROR,
 } from "./actions";
 
 const user = localStorage.getItem("user");
@@ -46,16 +49,16 @@ const AppProvider = ({ children }) => {
 
     //* save user data in local storage
     const addUserToLocalStorage = ({ user, token, location }) => {
-        localStorage.setItem(JSON.stringify(user));
-        localStorage.setItem(token);
-        localStorage.setItem(user);
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token);
+        localStorage.setItem("location", location);
     };
 
     //* remove user data from local storage
     const removeUserFromLocalStorage = () => {
-        localStorage.removeItem(user);
-        localStorage.removeItem(token);
-        localStorage.removeItem(location);
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        localStorage.removeItem("location");
     };
 
     const registerUser = async (currentUser) => {
@@ -93,8 +96,45 @@ const AppProvider = ({ children }) => {
         clearAlert();
     };
 
+    const loginUser = async (currentUser) => {
+        dispatch({
+            type: LOGIN_USER_BEGIN,
+        });
+
+        try {
+            const { data } = await axios.post(
+                "/api/v1/auth/login",
+                currentUser
+            );
+            const { user, token, location } = data;
+
+            dispatch({
+                type: LOGIN_USER_SUCCESS,
+                payload: {
+                    user,
+                    token,
+                    location,
+                },
+            });
+
+            addUserToLocalStorage({ user, token, location });
+        } catch (error) {
+            console.log(error.response);
+            dispatch({
+                type: LOGIN_USER_ERROR,
+                payload: {
+                    msg: error.response.data.msg,
+                },
+            });
+        }
+
+        clearAlert();
+    };
+
     return (
-        <AppContext.Provider value={{ ...state, displayAlert, registerUser }}>
+        <AppContext.Provider
+            value={{ ...state, displayAlert, registerUser, loginUser }}
+        >
             {children}
         </AppContext.Provider>
     );
