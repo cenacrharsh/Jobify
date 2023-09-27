@@ -3,6 +3,7 @@ import { useLoaderData } from 'react-router-dom';
 import { ChartsContainer, StatsContainer } from '../components';
 import customFetch from '../utils/customFetch';
 
+/*
 export const loader = async () => {
     try {
         const response = await customFetch.get('/jobs/stats');
@@ -11,6 +12,13 @@ export const loader = async () => {
     } catch (error) {
         return error;
     }
+};
+*/
+
+export const loader = async () => {
+    const response = await customFetch.get('/jobs/stats');
+
+    return response.data;
 };
 
 const Stats = () => {

@@ -1,4 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import {
     AddJob,
@@ -25,6 +27,7 @@ import { action as deleteJobAction } from './pages/DeleteJob';
 import { loader as adminLoader } from './pages/Admin';
 import { action as profileAction } from './pages/Profile';
 import { loader as statsLoader } from './pages/Stats';
+import ErrorElement from './components/ErrorElement';
 
 //* check default theme when our application mounts
 export const checkDefaultTheme = () => {
@@ -36,6 +39,15 @@ export const checkDefaultTheme = () => {
 };
 
 const isDarkThemeEnabled = checkDefaultTheme();
+
+//! Setup React Query
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            staleTime: 5 * 60 * 1000,
+        },
+    },
+});
 
 const router = createBrowserRouter([
     {
@@ -73,6 +85,7 @@ const router = createBrowserRouter([
                         path: 'stats',
                         element: <Stats />,
                         loader: statsLoader,
+                        errorElement: <ErrorElement />,
                     },
                     {
                         path: 'all-jobs',
@@ -106,7 +119,13 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-    return <RouterProvider router={router} />;
+    return (
+        <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+
+            <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+    );
 };
 
 export default App;
