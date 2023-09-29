@@ -8,22 +8,27 @@ import customFetch from '../utils/customFetch';
 import { FormRowSelect } from '../components/index';
 import { SubmitBtn } from '../components';
 
-export const action = async ({ request }) => {
-    try {
+export const action =
+    (queryClient) =>
+    async ({ request }) => {
         const formData = await request.formData();
         const data = Object.fromEntries(formData);
 
-        await customFetch.post('/jobs', data);
+        try {
+            await customFetch.post('/jobs', data);
 
-        toast.success('Successfully created new job');
+            //* invalidate all queries starting with jobs keyword
+            queryClient.invalidateQueries(['jobs']);
 
-        return redirect('all-jobs');
-    } catch (error) {
-        toast.error(error?.response?.data?.msg);
-        console.log(error);
-        return error;
-    }
-};
+            toast.success('Successfully created new job');
+
+            return redirect('all-jobs');
+        } catch (error) {
+            toast.error(error?.response?.data?.msg);
+            console.log(error);
+            return error;
+        }
+    };
 
 const AddJob = () => {
     const { user } = useOutletContext();
