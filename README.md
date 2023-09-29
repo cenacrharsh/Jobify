@@ -1,3 +1,1 @@
-#### Complete App
-
-[Jobify](https://jobify-zdjf.onrender.com/)
+#### [Jobify](https://jobify-zdjf.onrender.com/)
