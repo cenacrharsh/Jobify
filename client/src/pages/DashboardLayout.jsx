@@ -1,11 +1,5 @@
-import { useContext, createContext, useState } from 'react';
-import {
-    Outlet,
-    redirect,
-    useLoaderData,
-    useNavigate,
-    useNavigation,
-} from 'react-router-dom';
+import { useContext, createContext, useState, useEffect } from 'react';
+import { Outlet, redirect, useNavigate, useNavigation } from 'react-router-dom';
 
 import Wrapper from '../assets/wrappers/Dashboard';
 import { BigSidebar, Navbar, SmallSidebar, Loading } from '../components';
@@ -40,7 +34,7 @@ export const loader = (queryClient) => {
 
 const DashboardContext = createContext();
 
-const DashboardLayout = ({ isDarkThemeEnabled }) => {
+const DashboardLayout = ({ isDarkThemeEnabled, queryClient }) => {
     // const { user } = useLoaderData();
     const { user } = useQuery(userQuery)?.data;
 
@@ -50,6 +44,8 @@ const DashboardLayout = ({ isDarkThemeEnabled }) => {
 
     const [showSidebar, setShowSidebar] = useState(false);
     const [isDarkTheme, setIsDarkTheme] = useState(isDarkThemeEnabled);
+
+    const [isAuthError, setIsAuthError] = useState(false);
 
     const toggleDarkTheme = () => {
         const newDarkTheme = !isDarkTheme;
@@ -74,6 +70,27 @@ const DashboardLayout = ({ isDarkThemeEnabled }) => {
 
         toast.success('Successfully Logged Out');
     };
+
+    //* check if we have a 401 error
+    customFetch.interceptors.response.use(
+        (response) => {
+            return response;
+        },
+        (error) => {
+            if (error?.response?.status === 401) {
+                setIsAuthError(true);
+            }
+
+            return Promise.reject(error);
+        },
+    );
+
+    //* logout the use if we have a 401 error
+    useEffect(() => {
+        if (isAuthError === false) return;
+
+        logoutUser();
+    }, [isAuthError]);
 
     return (
         <DashboardContext.Provider
