@@ -1,26 +1,31 @@
 import { Link, Form, redirect, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { Logo, FormRow, SubmitBtn } from '../components';
 import Wrapper from '../assets/wrappers/RegisterAndLoginPage';
 import customFetch from '../utils/customFetch';
-import { toast } from 'react-toastify';
 
-export const action = async ({ request }) => {
-    try {
-        const formData = await request.formData();
-        const data = Object.fromEntries(formData);
+export const action =
+    (queryClient) =>
+    async ({ request }) => {
+        try {
+            const formData = await request.formData();
+            const data = Object.fromEntries(formData);
 
-        await customFetch.post('/auth/login', data);
+            await customFetch.post('/auth/login', data);
 
-        toast.success('Successfully Logged In');
+            //* invalidate all cached queries
+            queryClient.invalidateQueries();
 
-        return redirect('/dashboard');
-    } catch (error) {
-        toast.error(error?.response?.data?.msg);
-        console.log(error);
-        return error;
-    }
-};
+            toast.success('Successfully Logged In');
+
+            return redirect('/dashboard');
+        } catch (error) {
+            toast.error(error?.response?.data?.msg);
+            console.log(error);
+            return error;
+        }
+    };
 
 const Login = () => {
     const navigate = useNavigate();
