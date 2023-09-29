@@ -11,6 +11,7 @@ import Wrapper from '../assets/wrappers/Dashboard';
 import { BigSidebar, Navbar, SmallSidebar, Loading } from '../components';
 import customFetch from '../utils/customFetch';
 import { toast } from 'react-toastify';
+import { useQuery } from '@tanstack/react-query';
 
 /*
     - React Router has a built in prop 'context' that works like context, which can be used to pass down values to all the children here <Outlet />
@@ -18,21 +19,30 @@ import { toast } from 'react-toastify';
     - For other components like BigSidebar, SmallSidebar and Navbar we can use normal props or use createContext()
 */
 
-//* loader helps to fetch some data even before page renders, it also returns something
-export const loader = async () => {
-    try {
-        const { data } = await customFetch.get('/users/current-user');
-
+const userQuery = {
+    queryKey: ['user'],
+    queryFn: async () => {
+        const { data } = await customFetch('/users/current-user');
         return data;
-    } catch (error) {
-        return redirect('/');
-    }
+    },
+};
+
+//* loader helps to fetch some data even before page renders, it also returns something
+export const loader = (queryClient) => {
+    return async () => {
+        try {
+            return await queryClient.ensureQueryData(userQuery);
+        } catch (error) {
+            return redirect('/');
+        }
+    };
 };
 
 const DashboardContext = createContext();
 
 const DashboardLayout = ({ isDarkThemeEnabled }) => {
-    const { user } = useLoaderData();
+    // const { user } = useLoaderData();
+    const { user } = useQuery(userQuery)?.data;
 
     const navigate = useNavigate();
     const navigation = useNavigation();

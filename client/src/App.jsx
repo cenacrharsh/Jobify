@@ -72,9 +72,12 @@ const router = createBrowserRouter([
             {
                 path: 'dashboard',
                 element: (
-                    <DashboardLayout isDarkThemeEnabled={isDarkThemeEnabled} />
+                    <DashboardLayout
+                        isDarkThemeEnabled={isDarkThemeEnabled}
+                        queryClient={queryClient}
+                    />
                 ),
-                loader: dashboardLoader,
+                loader: dashboardLoader(queryClient),
                 children: [
                     {
                         index: true,
