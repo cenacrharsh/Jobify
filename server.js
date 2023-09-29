@@ -14,6 +14,8 @@ import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import cloudinary from 'cloudinary';
+import helmet from 'helmet';
+import expressMongoSanitize from 'express-mongo-sanitize';
 
 import errorHandlerMiddleware from './middleware/errorHandlerMiddleware.js';
 import { authenticateUser } from './middleware/authMiddleware.js';
@@ -27,6 +29,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 app.use(cookieParser());
 app.use(express.json());
+app.use(helmet());
+app.use(expressMongoSanitize());
 
 //! Public
 const __dirname = dirname(fileURLToPath(import.meta.url));
