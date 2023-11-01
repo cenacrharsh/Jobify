@@ -1,4 +1,4 @@
 ### Jobify
 
-## [Live Link]((https://jobify-zdjf.onrender.com/))
+## [Live Link](https://jobify-zdjf.onrender.com/)
 
