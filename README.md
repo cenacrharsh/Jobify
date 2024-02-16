@@ -1,4 +1,4 @@
-## Jobify
+## <h1 align=center>Jobify</h1>
 
 ## [Live Link](https://jobify-zdjf.onrender.com/)
 
